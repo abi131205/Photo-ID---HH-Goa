@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-bebas: 'Bebas Neue', sans-serif;
+    --font-archivo: 'Archivo Narrow', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  body {
+    font-family: var(--font-archivo);
+    background-color: #0B402B;
+    color: #F4F4F4;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-bebas);
+  }
+}
+
+.font-bebas {
+  font-family: 'Bebas Neue', sans-serif;
+}
+
+.font-archivo {
+  font-family: 'Archivo Narrow', sans-serif;
+}
+
+.font-mono-code {
+  font-family: 'Space Mono', monospace;
+}
+
+/* Dot grid background pattern from design HTML */
+.bg-grid-pattern {
+  background-image: radial-gradient(#FFD700 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Custom Caution Stripes */
+.stripes-gold-green {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #FFD700,
+    #FFD700 12px,
+    #0B402B 12px,
+    #0B402B 24px
+  );
+}
+
+.stripes-pink-gold {
+  background-image: repeating-linear-gradient(
+    45deg,
+    #FF1493,
+    #FF1493 10px,
+    #FFD700 10px,
+    #FFD700 20px
+  );
+}
+
+/* Loader bar animation */
+@keyframes loaderBar {
+  0% { width: 0%; transform-origin: left; }
+  50% { width: 100%; transform-origin: left; }
+  100% { width: 0%; transform-origin: right; }
+}
+
+.animate-loader-bar {
+  animation: loaderBar 2s ease-in-out infinite;
+}
+
+/* Hard Brutalist Shadows */
+.shadow-brutal-pink {
+  box-shadow: 6px 6px 0px 0px #FF1493;
+}
+
+.shadow-brutal-gold {
+  box-shadow: 6px 6px 0px 0px #FFD700;
+}
+
+.shadow-brutal-dark {
+  box-shadow: 6px 6px 0px 0px #083020;
+}
+
+.shadow-brutal-white {
+  box-shadow: 6px 6px 0px 0px #F4F4F4;
+}
+
+

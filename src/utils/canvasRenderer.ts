@@ -54,15 +54,28 @@ export function renderFrameToCanvas(
   }
 
   // Calculate cover scale
-  const imgWidth = image.naturalWidth || image.width;
-  const imgHeight = image.naturalHeight || image.height;
-  const coverScale = Math.max(width / imgWidth, height / imgHeight) * adjustments.scale;
+  const imgWidth = image.naturalWidth || image.width || 800;
+  const imgHeight = image.naturalHeight || image.height || 800;
 
-  const drawW = imgWidth * coverScale;
-  const drawH = imgHeight * coverScale;
+  if (imgWidth > 0 && imgHeight > 0 && !isNaN(imgWidth) && !isNaN(imgHeight)) {
+    const scaleVal = adjustments.scale > 0 ? adjustments.scale : 1.0;
+    const coverScale = Math.max(width / imgWidth, height / imgHeight) * scaleVal;
 
-  // Draw image centered
-  ctx.drawImage(image, -drawW / 2, -drawH / 2, drawW, drawH);
+    const drawW = imgWidth * coverScale;
+    const drawH = imgHeight * coverScale;
+
+    try {
+      // Draw image centered
+      ctx.drawImage(image, -drawW / 2, -drawH / 2, drawW, drawH);
+    } catch (e) {
+      console.error('Failed to draw image onto canvas:', e);
+    }
+  }
+
+  // Reset filter after image render
+  try {
+    ctx.filter = 'none';
+  } catch (e) {}
 
   ctx.restore();
 
@@ -106,7 +119,11 @@ function applyImageFilters(ctx: CanvasRenderingContext2D, adjustments: ImageAdju
       break;
   }
 
-  ctx.filter = filterString;
+  try {
+    ctx.filter = filterString;
+  } catch (err) {
+    ctx.filter = 'none';
+  }
 }
 
 // ==========================================
@@ -468,18 +485,18 @@ function drawCautionBorder(
   c2: string
 ) {
   ctx.save();
+
+  // Clip ONLY the border ring region around the center photo
+  ctx.beginPath();
+  ctx.rect(0, 0, w, h);
+  ctx.rect(bw, bw, w - bw * 2, h - bw * 2);
+  ctx.clip('evenodd');
+
+  // Fill border base color
   ctx.fillStyle = c1;
   ctx.fillRect(0, 0, w, h);
 
-  // Clip out center photo area
-  ctx.beginPath();
-  ctx.rect(bw, bw, w - bw * 2, h - bw * 2);
-  ctx.fillStyle = '#000000';
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.fill();
-  ctx.globalCompositeOperation = 'source-over';
-
-  // Draw diagonal stripes inside the border area
+  // Draw diagonal caution stripes inside the border ring
   const stripeWidth = 24;
   ctx.fillStyle = c2;
   ctx.beginPath();
@@ -576,7 +593,15 @@ export function generateSampleImage(): Promise<HTMLImageElement> {
     ctx.fillText('}', 60, 220);
 
     const img = new Image();
-    img.onload = () => resolve(img);
+    img.crossOrigin = 'anonymous';
+    img.onload = async () => {
+      try {
+        await img.decode();
+      } catch (e) {
+        // ignore decode error if loaded
+      }
+      resolve(img);
+    };
     img.src = canvas.toDataURL('image/png');
   });
 }

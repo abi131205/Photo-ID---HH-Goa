@@ -37,13 +37,14 @@ const DEFAULT_ADJUSTMENTS: ImageAdjustments = {
 };
 
 const DEFAULT_BADGE: CustomBadgeOptions = {
-  roleText: 'SHORTLISTED BUILDER',
+  roleText: 'HH GOA BUILDER',
   locationText: 'GOA, INDIA',
   dateText: '28-31 OCT 2026',
 };
 
 const QUICK_ROLES = [
-  'SHORTLISTED BUILDER',
+  'HH GOA BUILDER',
+  'BUILDER RESIDENT',
   'AI ENGINEER',
   'FULLSTACK DEV',
   'FOUNDER',
@@ -63,8 +64,16 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({ image, onR
 
   // Re-render canvas whenever image, preset, adjustments or badge options change
   useEffect(() => {
-    if (canvasRef.current && image) {
-      renderFrameToCanvas(canvasRef.current, image, selectedPreset, adjustments, badgeOptions);
+    const doRender = () => {
+      if (canvasRef.current && image) {
+        renderFrameToCanvas(canvasRef.current, image, selectedPreset, adjustments, badgeOptions);
+      }
+    };
+
+    doRender();
+
+    if (image && (!image.complete || image.naturalWidth === 0)) {
+      image.onload = () => doRender();
     }
   }, [image, selectedPreset, adjustments, badgeOptions]);
 
@@ -110,7 +119,7 @@ export const FrameCanvasEditor: React.FC<FrameCanvasEditorProps> = ({ image, onR
   };
 
   const openTwitterIntentDirect = () => {
-    const tweetText = encodeURIComponent(`Excited for HH Goa 2026! Here is my official shortlisted builder PFP frame 🌴⚡️ #FrameInGoa`);
+    const tweetText = encodeURIComponent(`Excited for HH Goa 2026! Here is my official builder PFP frame 🌴⚡️ #FrameInGoa @HackerHouseGoa`);
     const shareUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
     window.open(shareUrl, '_blank', 'noopener,noreferrer');
   };

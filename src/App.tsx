@@ -4,7 +4,7 @@ import { Header } from './components/Header';
 import { UploadDropzone } from './components/UploadDropzone';
 import { ProcessingLoader } from './components/ProcessingLoader';
 import { FrameCanvasEditor } from './components/FrameCanvasEditor';
-import { InfoModal } from './components/InfoModal';
+import { CameraModal } from './components/CameraModal';
 import { loadImageFromFile } from './utils/imageLoader';
 import { generateSampleImage } from './utils/canvasRenderer';
 
@@ -12,7 +12,7 @@ export default function App() {
   const [appState, setAppState] = useState<AppState>('empty');
   const [currentImage, setCurrentImage] = useState<HTMLImageElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
+  const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Process user file upload
@@ -25,18 +25,32 @@ export default function App() {
       // Decode image file (handles JPG, PNG, WEBP, HEIC)
       const image = await loadImageFromFile(file);
 
-      // Brief 1-second transition to show branded loader feedback
+      // Transition to result view
       setTimeout(() => {
         setCurrentImage(image);
         setAppState('result');
         setIsLoading(false);
-      }, 1000);
+      }, 800);
     } catch (err) {
       console.error('Error loading image:', err);
       setErrorMessage('Unable to load photo. Please try a JPG, PNG, or WEBP image.');
       setAppState('empty');
       setIsLoading(false);
     }
+  };
+
+  // Process live camera snapshot
+  const handleCameraCaptured = (image: HTMLImageElement) => {
+    setIsCameraOpen(false);
+    setIsLoading(true);
+    setErrorMessage(null);
+    setAppState('processing');
+
+    setTimeout(() => {
+      setCurrentImage(image);
+      setAppState('result');
+      setIsLoading(false);
+    }, 800);
   };
 
   // Demo image trigger
@@ -52,7 +66,7 @@ export default function App() {
         setCurrentImage(demoImg);
         setAppState('result');
         setIsLoading(false);
-      }, 900);
+      }, 800);
     } catch (err) {
       console.error('Error generating demo photo:', err);
       setErrorMessage('Failed to generate demo photo.');
@@ -71,7 +85,6 @@ export default function App() {
     <div className="min-h-screen bg-[#0B402B] bg-grid-pattern text-[#F4F4F4] flex flex-col justify-between selection:bg-[#FF1493] selection:text-white">
       {/* Navigation Header */}
       <Header
-        onOpenInfo={() => setIsInfoOpen(true)}
         onReset={handleReset}
         hasImage={appState === 'result'}
       />
@@ -95,6 +108,7 @@ export default function App() {
           <UploadDropzone
             onFileSelected={handleFileSelected}
             onDemoSelected={handleDemoSelected}
+            onOpenCamera={() => setIsCameraOpen(true)}
             isLoading={isLoading}
           />
         )}
@@ -118,9 +132,12 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Event Info Modal */}
-      <InfoModal isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
+      {/* Live Camera Modal */}
+      <CameraModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
+        onCapture={handleCameraCaptured}
+      />
     </div>
   );
-
 }

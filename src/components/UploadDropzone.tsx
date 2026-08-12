@@ -4,16 +4,17 @@ import { Camera, Upload, Sparkles, Image as ImageIcon, ShieldCheck } from 'lucid
 interface UploadDropzoneProps {
   onFileSelected: (file: File) => void;
   onDemoSelected: () => void;
+  onOpenCamera: () => void;
   isLoading: boolean;
 }
 
 export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
   onFileSelected,
   onDemoSelected,
+  onOpenCamera,
   isLoading,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +38,7 @@ export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 bg-[#FF1493] text-white px-3 py-1 font-mono-code text-xs font-black uppercase tracking-widest border-2 border-white shadow-[3px_3px_0px_0px_#FFD700] mb-2">
           <Sparkles className="w-3.5 h-3.5 text-[#FFD700]" />
-          <span>OFFICIAL SHORTLIST TOOL</span>
+          <span>BUILDER RESIDENCY</span>
         </div>
         
         <h2 className="font-bebas text-6xl sm:text-7xl font-black text-[#FFD700] uppercase tracking-tighter leading-[0.9] drop-shadow-md">
@@ -49,7 +50,7 @@ export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
         </p>
 
         <p className="font-archivo text-base sm:text-lg text-gray-200 max-w-md mx-auto leading-tight font-medium pt-1">
-          Generate your custom hackathon PFP frame instantly. Upload, crop, and share to let the world know you're heading to the coast.
+          Generate your official 1:1 HH Goa PFP frame. Upload a photo, capture live with webcam, or use demo.
         </p>
       </div>
 
@@ -68,19 +69,11 @@ export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
             : 'border-[#FF1493] bg-[#0B402B] hover:bg-[#0d4a32]'
         }`}
       >
-        {/* Hidden inputs */}
+        {/* Hidden file input */}
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*,.heic,.heif"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        <input
-          ref={cameraInputRef}
-          type="file"
-          accept="image/*"
-          capture="user"
           onChange={handleFileChange}
           className="hidden"
         />
@@ -118,12 +111,12 @@ export const UploadDropzone: React.FC<UploadDropzoneProps> = ({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              cameraInputRef.current?.click();
+              onOpenCamera();
             }}
             className="flex items-center gap-2 bg-[#083020] text-[#FFD700] border-2 border-[#FFD700] px-5 py-2.5 font-bebas text-2xl uppercase tracking-wider font-black shadow-[3px_3px_0px_0px_#FF1493] hover:bg-[#0B402B] active:translate-x-0.5 active:translate-y-0.5 transition-colors"
           >
             <Camera className="w-5 h-5" />
-            Take Photo
+            Live Camera
           </button>
         </div>
       </div>

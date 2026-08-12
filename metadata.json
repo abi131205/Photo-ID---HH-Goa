@@ -1,6 +1,6 @@
 {
   "name": "HH Goa 2026 Frame Generator",
   "description": "PFP frame and overlay generator for HH Goa 2026 hackathon shortlisting task",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
